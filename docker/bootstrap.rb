@@ -52,7 +52,11 @@ end
 host = env('REDMINE_HOST_NAME') || env('RAILWAY_PUBLIC_DOMAIN')
 if host
   current = Setting.where(:name => 'host_name').first
-  if env('REDMINE_HOST_NAME') || current.nil? || current.value == 'localhost:3000'
+  # Also self-heal a stale generated domain — Railway hands out a new
+  # *.up.railway.app name if the domain is ever regenerated — while never
+  # touching a custom domain the operator typed in themselves.
+  stale_generated = current && current.value.end_with?('.up.railway.app') && current.value != host
+  if env('REDMINE_HOST_NAME') || current.nil? || current.value == 'localhost:3000' || stale_generated
     if Setting.host_name != host
       Setting.host_name = host
       log "set host_name=#{host}"
