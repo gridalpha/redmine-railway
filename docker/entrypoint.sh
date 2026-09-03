@@ -13,7 +13,7 @@ DATA_DIR="${RAILWAY_VOLUME_MOUNT_PATH:-/data}"
 # One volume, three trees.
 #
 # Redmine keeps attachments in files/, plugins in plugins/ and themes in
-# public/themes/, and all three have to survive a redeploy. A Railway service
+# themes/, and all three have to survive a redeploy. A Railway service
 # gets exactly one volume, so the three live under the single mount and the app
 # paths become symlinks into it.
 # --------------------------------------------------------------------------
@@ -25,10 +25,12 @@ mkdir -p "$DATA_DIR/files" "$DATA_DIR/plugins" "$DATA_DIR/themes" "$DATA_DIR/rep
 cp -a /opt/redmine-pristine-plugins/. "$DATA_DIR/plugins/"
 cp -a /opt/redmine-pristine-themes/.  "$DATA_DIR/themes/"
 
-rm -rf "$APP_DIR/files" "$APP_DIR/plugins" "$APP_DIR/public/themes"
+# Redmine 7 keeps third-party themes in <root>/themes; the built-in ones moved to
+# app/assets/themes and stay in the image.
+rm -rf "$APP_DIR/files" "$APP_DIR/plugins" "$APP_DIR/themes"
 ln -s "$DATA_DIR/files"   "$APP_DIR/files"
 ln -s "$DATA_DIR/plugins" "$APP_DIR/plugins"
-ln -s "$DATA_DIR/themes"  "$APP_DIR/public/themes"
+ln -s "$DATA_DIR/themes"  "$APP_DIR/themes"
 
 chown redmine:redmine "$DATA_DIR" "$DATA_DIR/files" "$DATA_DIR/plugins" "$DATA_DIR/themes" "$DATA_DIR/repositories"
 chown -R redmine:redmine "$DATA_DIR/plugins" "$DATA_DIR/themes"

@@ -109,7 +109,7 @@ automatically). It is laid out as:
 ```
 <mount>/files          attachments
 <mount>/plugins        Redmine plugins, refreshed from the image each boot
-<mount>/themes         public/themes
+<mount>/themes         third-party themes (themes/)
 <mount>/repositories   somewhere to clone repositories for the SCM browser
 ```
 
