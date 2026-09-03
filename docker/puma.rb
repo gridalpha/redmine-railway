@@ -10,11 +10,8 @@ threads_count = Integer(ENV.fetch('RAILS_MAX_THREADS', 5))
 threads threads_count, threads_count
 workers workers_count
 
-if workers_count > 0
-  preload_app!
-  on_worker_boot do
-    ActiveRecord::Base.establish_connection if defined?(ActiveRecord::Base)
-  end
-end
+# Rails re-establishes the Active Record connection in each forked worker on its
+# own, so no on_worker_boot hook is needed (and Puma 8 deprecates the old one).
+preload_app! if workers_count > 0
 
 plugin :tmp_restart
